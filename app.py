@@ -49,6 +49,21 @@ def create_app(config_class=Config):
     # ── Database init ────────────────────────────────────────────────────────
     with app.app_context():
         db.create_all()
+        
+        # Auto-seed if the product table is empty
+        try:
+            from models import Product
+            if Product.query.count() == 0:
+                print("Database is empty! Auto-seeding products...")
+                from seed_db import SAMPLE_PRODUCTS
+                for data in SAMPLE_PRODUCTS:
+                    p = Product(**data)
+                    db.session.add(p)
+                db.session.commit()
+                print("Auto-seed complete.")
+        except Exception as e:
+            print(f"Auto-seed skipped or failed: {e}")
+            db.session.rollback()
 
     return app
 
