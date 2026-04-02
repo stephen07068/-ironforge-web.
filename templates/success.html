@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmed — IronForge Nigeria{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+
+  <!-- Animated Success icon -->
+  <div class="relative w-24 h-24 mx-auto mb-8">
+    <div class="absolute inset-0 bg-green-100 rounded-full ring-pulse"></div>
+    <div class="absolute inset-0 flex items-center justify-center">
+      <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path class="check-draw" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+      </svg>
+    </div>
+  </div>
+
+  <h1 class="font-display text-4xl sm:text-5xl text-forge-black tracking-wide mb-4 animate-fade-in">ORDER CONFIRMED</h1>
+
+  <div class="animate-fade-up">
+    {% if order.payment_status == 'paid' %}
+    <p class="text-gray-500 mb-2">Payment successful! Thank you for your order.</p>
+    {% elif order.payment_status == 'whatsapp' %}
+    <p class="text-gray-500 mb-2">Your WhatsApp order has been sent. Our team will be in touch shortly.</p>
+    {% else %}
+    <p class="text-gray-500 mb-2">Your order has been received and is being processed.</p>
+    {% endif %}
+
+    <p class="text-sm text-gray-400 mb-10">
+      Order reference: <span class="font-mono font-semibold text-forge-black bg-gray-100 px-2 py-1 rounded">{{ order.reference }}</span>
+    </p>
+  </div>
+
+  <!-- Order summary card -->
+  <div class="bg-forge-light rounded-2xl p-8 text-left mb-10 order-card border border-gray-100 shadow-sm">
+    <h2 class="font-bold text-xs tracking-[4px] uppercase text-gray-400 mb-6">Order Details</h2>
+
+    <!-- Customer info -->
+    <div class="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-gray-200">
+      <div>
+        <div class="text-[10px] font-bold tracking-wider uppercase text-gray-400 mb-1">Customer</div>
+        <div class="font-semibold text-sm text-forge-black">{{ order.customer_name }}</div>
+      </div>
+      <div>
+        <div class="text-[10px] font-bold tracking-wider uppercase text-gray-400 mb-1">Phone</div>
+        <div class="font-semibold text-sm text-forge-black">{{ order.customer_phone }}</div>
+      </div>
+      <div>
+        <div class="text-[10px] font-bold tracking-wider uppercase text-gray-400 mb-1">Email</div>
+        <div class="font-semibold text-sm text-forge-black">{{ order.customer_email }}</div>
+      </div>
+      <div>
+        <div class="text-[10px] font-bold tracking-wider uppercase text-gray-400 mb-1">Payment</div>
+        <div>
+          <span class="inline-block text-[10px] font-bold tracking-wider uppercase px-2 py-1 rounded
+                       {% if order.payment_status == 'paid' %}bg-green-100 text-green-700
+                       {% elif order.payment_status == 'whatsapp' %}bg-blue-100 text-blue-700
+                       {% else %}bg-yellow-100 text-yellow-700{% endif %}">
+            {{ order.payment_status | upper }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Line items -->
+    <div class="space-y-3 mb-6">
+      {% for item in order.items %}
+      <div class="flex items-center justify-between text-sm">
+        <div>
+          <span class="font-semibold text-forge-black">{{ item.product.name }}</span>
+          <span class="text-gray-400 ml-2">×{{ item.quantity }} ({{ 'Ton' if item.unit == 'tons' else 'Pieces' }})</span>
+        </div>
+        <span class="font-bold text-forge-black">{{ item.subtotal_formatted() }}</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Total -->
+    <div class="border-t border-gray-200 pt-4 flex items-center justify-between">
+      <span class="font-bold text-sm uppercase tracking-wider text-forge-black">Total Paid</span>
+      <span class="font-bold text-2xl text-forge-black">{{ order.total_formatted() }}</span>
+    </div>
+  </div>
+
+  <!-- Address -->
+  <div class="bg-white border border-gray-100 shadow-sm rounded-xl p-6 text-left mb-10 order-card" style="animation-delay: 0.3s">
+    <div class="text-[10px] font-bold tracking-wider uppercase text-gray-400 mb-2 flex items-center gap-2">
+      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Delivery Address
+    </div>
+    <p class="text-sm text-forge-black">{{ order.customer_address }}</p>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex flex-col sm:flex-row gap-4 justify-center order-card" style="animation-delay: 0.4s">
+    <a href="{{ url_for('shop.shop') }}"
+       class="btn-red">
+      Continue Shopping
+    </a>
+    <a href="https://wa.me/2347044891567" target="_blank"
+       class="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold text-xs tracking-widest uppercase px-8 py-4 rounded-lg transition-colors">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a8.9 8.9 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.141 1.548 5.875L.057 23.448a.5.5 0 0 0 .634.608l5.82-1.527A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.67-.5-5.21-1.376l-.368-.212-3.813 1 .97-3.727-.232-.381A9.938 9.938 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+      </svg>
+      Contact Support
+    </a>
+  </div>
+</div>
+{% endblock %}

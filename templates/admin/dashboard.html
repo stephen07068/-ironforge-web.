@@ -1,0 +1,64 @@
+{% extends "admin/base.html" %}
+
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block admin_content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+  <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+    <div class="text-[10px] font-bold tracking-widest uppercase text-gray-400 mb-2">Total Revenue</div>
+    <div class="text-3xl font-display">{{ stats.revenue | naira }}</div>
+  </div>
+  <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+    <div class="text-[10px] font-bold tracking-widest uppercase text-gray-400 mb-2">Total Orders</div>
+    <div class="text-3xl font-display">{{ stats.total_orders }}</div>
+  </div>
+  <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+    <div class="text-[10px] font-bold tracking-widest uppercase text-gray-400 mb-2">Pending Orders</div>
+    <div class="text-3xl font-display text-forge-red">{{ stats.pending_orders }}</div>
+  </div>
+  <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+    <div class="text-[10px] font-bold tracking-widest uppercase text-gray-400 mb-2">Products</div>
+    <div class="text-3xl font-display">{{ stats.total_products }}</div>
+  </div>
+</div>
+
+<!-- Recent Orders -->
+<h2 class="font-bold text-sm tracking-widest uppercase text-forge-black mb-4">Recent Orders</h2>
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-8">
+  {% if recent_orders %}
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 border-b border-gray-100">
+      <tr>
+        <th class="text-left px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Order Ref</th>
+        <th class="text-left px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Customer</th>
+        <th class="text-left px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Date</th>
+        <th class="text-left px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Amount</th>
+        <th class="text-right px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Status</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for o in recent_orders %}
+      <tr class="hover:bg-gray-50 transition-colors">
+        <td class="px-6 py-4 font-bold text-forge-black">{{ o.reference }}</td>
+        <td class="px-6 py-4">
+          <div class="font-bold">{{ o.customer_name }}</div>
+          <div class="text-xs text-gray-400">{{ o.customer_email }}</div>
+        </td>
+        <td class="px-6 py-4 text-gray-500">{{ o.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td class="px-6 py-4 font-semibold text-forge-black">{{ o.total_amount | naira }}</td>
+        <td class="px-6 py-4 text-right">
+          {% if o.payment_status == 'paid' %}
+            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Paid</span>
+          {% else %}
+            <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Pending</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="p-8 text-center text-sm text-gray-500">No recent orders found.</div>
+  {% endif %}
+</div>
+{% endblock %}

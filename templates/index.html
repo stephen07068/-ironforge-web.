@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}IronForge Nigeria — Premium Iron Rods for Strong Foundations{% endblock %}
+{% block meta_desc %}Buy premium TMT iron rods in Nigeria. Grade 60 & 75 rebars for residential and industrial construction. Fast delivery, best prices. Order via Paystack or WhatsApp.{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════════════════════════════════ HERO -->
+<section id="hero-section">
+  <div id="hero-overlay"></div>
+  <div id="hero-img-wrap">
+    <img src="{{ url_for('static', filename='images/hero_bg.jpg') }}"
+         alt="Iron rods background"
+         fetchpriority="high"/>
+  </div>
+
+  <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-24">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+      <!-- Left: text -->
+      <div class="animate-fade-up">
+        <span class="section-label">Premium Engineering</span>
+        <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl text-white leading-none tracking-wide mb-6">
+          <span class="text-forge-red">IRONFORGE</span><br/>
+          UNSHAKEABLE<br/>
+          RELIABILITY<br/>
+          IN EVERY BEAM.
+        </h1>
+        <p class="text-gray-400 text-base sm:text-lg max-w-md mb-10 leading-relaxed">
+          Forged with precision. Engineered for structural integrity.
+          The backbone of modern Nigerian architecture.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="{{ url_for('shop.shop') }}" class="btn-red">Explore Products →</a>
+          <a href="{{ url_for('shop.about') }}" class="btn-outline-white">Technical Data</a>
+        </div>
+      </div>
+
+      <!-- Right: Grade 60 badge card -->
+      <div class="hidden lg:flex justify-end animate-slide-right">
+        <div class="bg-black/60 backdrop-blur-sm border border-white/15 rounded p-6 max-w-xs">
+          <div class="text-[10px] font-bold tracking-[4px] uppercase text-forge-red mb-3">Certified Grade 60 Steel</div>
+          <p class="text-white/70 text-sm leading-relaxed mb-5">
+            Exceeding ASTM standards for tensile strength and ductility with every batch.
+          </p>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="bg-white/8 border border-white/10 rounded p-3 text-center">
+              <div class="font-display text-2xl text-white">60k</div>
+              <div class="text-[10px] text-gray-500 uppercase tracking-wider">PSI Yield</div>
+            </div>
+            <div class="bg-white/8 border border-white/10 rounded p-3 text-center">
+              <div class="font-display text-2xl text-white">ISO</div>
+              <div class="text-[10px] text-gray-500 uppercase tracking-wider">Certified</div>
+            </div>
+            <div class="bg-white/8 border border-white/10 rounded p-3 text-center">
+              <div class="font-display text-2xl text-white">12%</div>
+              <div class="text-[10px] text-gray-500 uppercase tracking-wider">Min Elongation</div>
+            </div>
+            <div class="bg-white/8 border border-white/10 rounded p-3 text-center">
+              <div class="font-display text-2xl text-white">24h</div>
+              <div class="text-[10px] text-gray-500 uppercase tracking-wider">Dispatch</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════ STATS BAND -->
+<div class="stats-band py-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-3 gap-6 text-center">
+      <div>
+        <div class="stat-number">25+</div>
+        <div class="stat-label">Years of Excellence</div>
+        <p class="text-gray-600 text-xs mt-2 hidden sm:block">Decades of precision delivery to construction projects nationwide.</p>
+      </div>
+      <div class="border-x border-white/5">
+        <div class="stat-number">1.2M</div>
+        <div class="stat-label">Tons Dispatched</div>
+        <p class="text-gray-600 text-xs mt-2 hidden sm:block">Massive scale logistics capabilities handling the largest project demands.</p>
+      </div>
+      <div>
+        <div class="stat-number">99.8%</div>
+        <div class="stat-label">Quality Compliance</div>
+        <p class="text-gray-600 text-xs mt-2 hidden sm:block">Near-perfect adherence to ASTM & BS standards within every rolling batch.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ STRUCTURAL PORTFOLIO -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-end justify-between mb-10 reveal">
+      <div>
+        <span class="section-label">Core Products</span>
+        <h2 class="font-display text-4xl sm:text-5xl text-forge-black tracking-wide">STRUCTURAL PORTFOLIO</h2>
+        <p class="text-gray-500 text-sm mt-2 max-w-md">Programmed for certified and blueprints means full as-built recognition. Each product is certified for tensile strength and ductility.</p>
+      </div>
+      <a href="{{ url_for('shop.shop') }}" class="hidden md:flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-gray-400 hover:text-forge-red transition-colors">
+        View All Products <span>→</span>
+      </a>
+    </div>
+
+    {% if featured_products %}
+    <!-- Asymmetric portfolio grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 reveal">
+
+      <!-- Large card — first product -->
+      {% set p0 = featured_products[0] %}
+      <a href="{{ url_for('shop.product_detail', slug=p0.slug) }}"
+         class="portfolio-card rounded overflow-hidden h-80 md:h-96 block">
+        <img src="{{ url_for('static', filename='images/products/' ~ p0.image) }}" alt="{{ p0.name }}"/>
+        <div class="portfolio-card-overlay"></div>
+        <div class="portfolio-card-content">
+          {% if p0.badge %}<span class="text-[9px] font-bold tracking-[3px] uppercase bg-forge-red text-white px-2 py-1 rounded-sm">{{ p0.badge }}</span>{% endif %}
+          <h3 class="font-display text-2xl text-white mt-2 tracking-wide">{{ p0.name }}</h3>
+          <p class="text-gray-400 text-xs mt-1 line-clamp-2">{{ p0.description }}</p>
+          <span class="portfolio-shop-link">Shop More →</span>
+        </div>
+      </a>
+
+      <!-- Right column — next 2 products stacked -->
+      <div class="grid grid-rows-2 gap-4">
+        {% for p in featured_products[1:3] %}
+        <a href="{{ url_for('shop.product_detail', slug=p.slug) }}"
+           class="portfolio-card rounded overflow-hidden h-44 block">
+          <img src="{{ url_for('static', filename='images/products/' ~ p.image) }}" alt="{{ p.name }}" loading="lazy"/>
+          <div class="portfolio-card-overlay"></div>
+          <div class="portfolio-card-content">
+            {% if p.badge %}<span class="text-[9px] font-bold tracking-[3px] uppercase bg-forge-red text-white px-2 py-1 rounded-sm">{{ p.badge }}</span>{% endif %}
+            <h3 class="font-display text-xl text-white mt-1 tracking-wide">{{ p.name }}</h3>
+            <span class="portfolio-shop-link">Shop More →</span>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Bottom row — next 2 products side by side -->
+    {% if featured_products|length > 3 %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 reveal">
+      {% for p in featured_products[3:5] %}
+      <a href="{{ url_for('shop.product_detail', slug=p.slug) }}"
+         class="portfolio-card rounded overflow-hidden h-56 block">
+        <img src="{{ url_for('static', filename='images/products/' ~ p.image) }}" alt="{{ p.name }}" loading="lazy"/>
+        <div class="portfolio-card-overlay"></div>
+        <div class="portfolio-card-content">
+          {% if p.badge %}<span class="text-[9px] font-bold tracking-[3px] uppercase bg-forge-red text-white px-2 py-1 rounded-sm">{{ p.badge }}</span>{% endif %}
+          <h3 class="font-display text-xl text-white mt-1 tracking-wide">{{ p.name }}</h3>
+          <p class="text-gray-400 text-xs mt-0.5 line-clamp-1">{{ p.description }}</p>
+          <span class="portfolio-shop-link">Shop More →</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-16 text-gray-400">
+      <p>No featured products yet. <a href="{{ url_for('shop.shop') }}" class="text-forge-red underline">Browse all products →</a></p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════ WHY INDUSTRY GIANTS CHOOSE -->
+<section class="py-20 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Left: numbered features -->
+      <div class="reveal">
+        <span class="section-label">Why Choose Us</span>
+        <h2 class="font-display text-4xl sm:text-5xl text-forge-black tracking-wide mb-10">
+          WHY INDUSTRY<br/>GIANTS CHOOSE<br/><span class="text-forge-red">IRONFORGE</span>
+        </h2>
+
+        <div class="space-y-8">
+          <div class="numbered-feature">
+            <div class="feature-number">01</div>
+            <div>
+              <h3 class="font-bold text-sm tracking-widest uppercase text-forge-black mb-2">Uncompromising Quality</h3>
+              <p class="text-gray-500 text-sm leading-relaxed">Every rod undergoes ultrasonic testing to ensure zero internal flaws or cracks before leaving our facility. Full mill certification with every order.</p>
+            </div>
+          </div>
+          <div class="numbered-feature">
+            <div class="feature-number">02</div>
+            <div>
+              <h3 class="font-bold text-sm tracking-widest uppercase text-forge-black mb-2">Logistical Precision</h3>
+              <p class="text-gray-500 text-sm leading-relaxed">Our fleet covers all 36 states with 24–48 hour express dispatch. Automated tracking from warehouse to your construction site.</p>
+            </div>
+          </div>
+          <div class="numbered-feature">
+            <div class="feature-number">03</div>
+            <div>
+              <h3 class="font-bold text-sm tracking-widest uppercase text-forge-black mb-2">Transparent Pricing</h3>
+              <p class="text-gray-500 text-sm leading-relaxed">Competitive bulk rates with direct from-mill pricing and zero hidden surcharges. What you see is what you pay.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: image with stats overlay -->
+      <div class="relative reveal">
+        <div class="rounded overflow-hidden aspect-[4/5] bg-gray-200">
+          <img src="{{ url_for('static', filename='images/hero_bg.jpg') }}"
+               alt="IronForge construction"
+               class="w-full h-full object-cover"
+               loading="lazy"/>
+        </div>
+        <!-- Floating stat card -->
+        <div class="absolute bottom-6 left-6 bg-forge-dark text-white p-6 rounded border border-white/10 shadow-2xl">
+          <div class="font-display text-5xl text-forge-red leading-none">25+</div>
+          <div class="text-[10px] font-bold tracking-[3px] uppercase text-gray-400 mt-1">Years Excellence</div>
+          <div class="mt-3 space-y-1">
+            <div class="flex items-center gap-2 text-xs text-gray-400"><span class="text-forge-red">✓</span> ASTM A615 Compliant</div>
+            <div class="flex items-center gap-2 text-xs text-gray-400"><span class="text-forge-red">✓</span> Anti-rust Coating</div>
+            <div class="flex items-center gap-2 text-xs text-gray-400"><span class="text-forge-red">✓</span> Mill Certified</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════ TESTIMONIALS -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12 reveal">
+      <span class="section-label">Customer Reviews</span>
+      <h2 class="font-display text-4xl sm:text-5xl text-forge-black tracking-wide">THE WORD ON<br/>THE GROUND</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+      <div class="testimonial-card">
+        <p class="text-sm text-gray-600 leading-relaxed mb-5 relative z-10">
+          "The TMT rebars from IronForge have been nothing short of exceptional. Yield strength consistently meets our structural engineering tests, and they deliver precisely when they say they will."
+        </p>
+        <div class="font-bold text-xs uppercase tracking-wider text-forge-black">Engr. Tunde O.</div>
+        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Lead Structural Engineer</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="text-sm text-gray-600 leading-relaxed mb-5 relative z-10">
+          "Finding reliable, certified grade 60 steel at scale was a major bottleneck for us. IronForge not only met our huge volume requirements but managed the logistics directly to our site."
+        </p>
+        <div class="font-bold text-xs uppercase tracking-wider text-forge-black">Chioma N.</div>
+        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Project Director</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="text-sm text-gray-600 leading-relaxed mb-5 relative z-10">
+          "As an independent contractor, pricing and speed are everything. IronForge's online portal and WhatsApp ordering makes it so easy. Products arrive on time with no hidden fees."
+        </p>
+        <div class="font-bold text-xs uppercase tracking-wider text-forge-black">Adebayo S.</div>
+        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Independent Developer</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════ CTA BAND -->
+<section class="cta-band py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="reveal">
+        <h2 class="font-display text-5xl sm:text-6xl text-white tracking-wide leading-none mb-4">
+          READY TO BUILD<br/>THE FUTURE?
+        </h2>
+        <p class="text-gray-500 text-sm leading-relaxed mb-8 max-w-md">
+          Submit your Bill of Quantities (BOQ) today. Our logistics team ensures delivery to any site, regardless of complexity or scale.
+        </p>
+        <a href="https://wa.me/2347044891567?text=Hello%20IronForge%2C%20I%20need%20a%20bulk%20quote"
+           target="_blank"
+           class="btn-red">
+          Get a Bulk Quote →
+        </a>
+      </div>
+
+      <!-- Quote form card -->
+      <div class="bg-white/5 border border-white/10 rounded p-8 reveal">
+        <div class="text-[10px] font-bold tracking-[4px] uppercase text-forge-red mb-1">Request a Quote</div>
+        <h3 class="font-bold text-white text-lg mb-6">Tell us about your project</h3>
+        <div class="space-y-3">
+          <input type="text" placeholder="Project Site (e.g. Chevron/Parkland)"
+                 class="w-full bg-white/8 border border-white/10 rounded px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-forge-red transition-colors"/>
+          <input type="text" placeholder="Volume Needed (e.g. 5 Tons)"
+                 class="w-full bg-white/8 border border-white/10 rounded px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-forge-red transition-colors"/>
+          <a href="https://wa.me/2347044891567?text=Hello%20IronForge%2C%20I%20need%20a%20bulk%20quote"
+             target="_blank"
+             class="block w-full text-center btn-red mt-2">
+            Submit Request
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

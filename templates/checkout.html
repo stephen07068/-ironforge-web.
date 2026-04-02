@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout — IronForge Nigeria{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <h1 class="font-display text-4xl text-forge-black tracking-wide mb-10">CHECKOUT</h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+    <!-- Checkout Form -->
+    <div class="lg:col-span-2">
+
+      <!-- Flash errors -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="mb-4 px-4 py-3 rounded-lg text-sm font-medium
+              {% if category == 'danger' %}bg-red-50 border border-red-200 text-red-700
+              {% else %}bg-blue-50 border border-blue-200 text-blue-700{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form id="checkout-form" method="POST" action="{{ url_for('orders.checkout') }}">
+
+        <!-- Customer details -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm space-y-6 mb-6">
+          <h2 class="font-bold text-sm tracking-widest uppercase text-forge-black border-b border-gray-100 pb-4">
+            Customer Details
+          </h2>
+
+          <div>
+            <label for="name" class="block text-[10px] font-bold tracking-[4px] uppercase text-gray-400 mb-2">Full Name *</label>
+            <input type="text" id="name" name="name" required placeholder="Enter your full name"
+                   class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-forge-black placeholder-gray-400 focus:outline-none focus:border-forge-black transition-colors"/>
+          </div>
+
+          <div>
+            <label for="email" class="block text-[10px] font-bold tracking-[4px] uppercase text-gray-400 mb-2">Email Address *</label>
+            <input type="email" id="email" name="email" required placeholder="you@example.com"
+                   class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-forge-black placeholder-gray-400 focus:outline-none focus:border-forge-black transition-colors"/>
+          </div>
+
+          <div>
+            <label for="phone" class="block text-[10px] font-bold tracking-[4px] uppercase text-gray-400 mb-2">Phone Number *</label>
+            <input type="tel" id="phone" name="phone" required placeholder="08012345678"
+                   class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-forge-black placeholder-gray-400 focus:outline-none focus:border-forge-black transition-colors"/>
+          </div>
+
+          <div>
+            <label for="address" class="block text-[10px] font-bold tracking-[4px] uppercase text-gray-400 mb-2">Delivery Address *</label>
+            <textarea id="address" name="address" required rows="3"
+                      placeholder="No. 12, Construction Road, Lagos State"
+                      class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-forge-black placeholder-gray-400 focus:outline-none focus:border-forge-black transition-colors resize-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Hidden method field — set by button clicks below -->
+        <input type="hidden" name="method" id="payment-method-field" value="paystack"/>
+
+        <!-- Payment method selector (visual only) -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm mb-6">
+          <h2 class="font-bold text-sm tracking-widest uppercase text-forge-black border-b border-gray-100 pb-4 mb-6">
+            Payment Method
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+
+            <!-- Paystack card -->
+            <div id="card-paystack"
+                 onclick="selectMethod('paystack')"
+                 class="cursor-pointer border-2 border-forge-black bg-gray-50 rounded-xl p-5 transition-all">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-9 h-9 bg-forge-black rounded-lg flex items-center justify-center">
+                  <span class="text-white font-bold text-sm">&#8358;</span>
+                </div>
+                <span class="font-bold text-sm text-forge-black">Pay with Paystack</span>
+                <span class="ml-auto text-[10px] font-bold tracking-wider bg-green-100 text-green-700 px-2 py-0.5 rounded-full uppercase">Secure</span>
+              </div>
+              <p class="text-xs text-gray-500">Card, bank transfer, USSD. Instant confirmation.</p>
+              <div class="flex items-center gap-2 mt-3 flex-wrap">
+                <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-medium">Visa</span>
+                <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-medium">Mastercard</span>
+                <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-medium">USSD</span>
+                <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-medium">Bank Transfer</span>
+              </div>
+            </div>
+
+            <!-- WhatsApp card -->
+            <div id="card-whatsapp"
+                 onclick="selectMethod('whatsapp')"
+                 class="cursor-pointer border-2 border-gray-200 rounded-xl p-5 transition-all hover:border-green-300">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-9 h-9 bg-green-500 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a8.9 8.9 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.141 1.548 5.875L.057 23.448a.5.5 0 0 0 .634.608l5.82-1.527A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.67-.5-5.21-1.376l-.368-.212-3.813 1 .97-3.727-.232-.381A9.938 9.938 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                  </svg>
+                </div>
+                <span class="font-bold text-sm text-forge-black">WhatsApp Order</span>
+              </div>
+              <p class="text-xs text-gray-500">Send your order to our team via WhatsApp. Confirmed within minutes.</p>
+            </div>
+          </div>
+
+          <!-- Error display -->
+          <div id="checkout-error" class="hidden mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 font-medium"></div>
+
+          <!-- Two clear action buttons -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <!-- Pay with Paystack button -->
+            <button type="submit" id="btn-paystack"
+                    onclick="document.getElementById('payment-method-field').value='paystack';"
+                    class="w-full bg-[#0BA4DB] shadow-lg shadow-[#0BA4DB]/30 text-white font-bold text-sm tracking-widest uppercase py-4 rounded-xl hover:bg-[#098bbd] transition-colors flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                 <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2zm-1 4v3.5H8.5v3H11v4h2v-4h2.5v-3H13V6h-2z"/>
+              </svg>
+              <span>Pay with Paystack</span>
+            </button>
+
+            <!-- Order via WhatsApp button -->
+            <button type="submit" id="btn-whatsapp"
+                    onclick="document.getElementById('payment-method-field').value='whatsapp';"
+                    class="w-full bg-green-500 text-white font-bold text-sm tracking-widest uppercase py-4 rounded-xl hover:bg-green-600 transition-colors flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a8.9 8.9 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.141 1.548 5.875L.057 23.448a.5.5 0 0 0 .634.608l5.82-1.527A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.67-.5-5.21-1.376l-.368-.212-3.813 1 .97-3.727-.232-.381A9.938 9.938 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+              </svg>
+              <span>Order via WhatsApp</span>
+            </button>
+          </div>
+
+          <p class="text-center text-xs text-gray-400 mt-4">
+            <span class="inline-flex items-center gap-1">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+              Secured checkout powered by Paystack
+            </span>
+          </p>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Order Summary -->
+    <div>
+      <div class="bg-forge-light rounded-2xl p-6 sticky top-24">
+        <h2 class="font-bold text-sm tracking-widest uppercase text-forge-black mb-6">Order Summary</h2>
+
+        <div class="space-y-3 mb-6">
+          {% for item in items %}
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600 truncate max-w-[170px]">{{ item.product.name }} x{{ item.qty }}</span>
+            <span class="font-semibold text-forge-black ml-2 flex-shrink-0">{{ item.subtotal | naira }}</span>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="border-t border-gray-200 pt-4 mb-4">
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-sm uppercase tracking-wider">Total</span>
+            <span class="font-bold text-2xl text-forge-black">{{ total | naira }}</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">Excl. delivery. Confirm site distance on WhatsApp.</p>
+        </div>
+
+        <div class="space-y-2 pt-2 border-t border-gray-200">
+          <div class="flex items-center gap-2 text-xs text-gray-500">
+            <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+            </svg>
+            Mill-certified Grade 60 &amp; 75 steel
+          </div>
+          <div class="flex items-center gap-2 text-xs text-gray-500">
+            <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+            </svg>
+            24-48h dispatch nationwide
+          </div>
+          <div class="flex items-center gap-2 text-xs text-gray-500">
+            <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+            </svg>
+            Secure payment via Paystack
+          </div>
+        </div>
+
+        <a href="{{ url_for('cart.view_cart') }}"
+           class="block text-xs text-center text-gray-400 hover:text-forge-red mt-5 transition-colors">
+          &larr; Edit Cart
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Visual card selection (no effect on form logic)
+function selectMethod(method) {
+  var cardPaystack = document.getElementById('card-paystack');
+  var cardWhatsapp = document.getElementById('card-whatsapp');
+  if (method === 'paystack') {
+    cardPaystack.className = 'cursor-pointer border-2 border-forge-black bg-gray-50 rounded-xl p-5 transition-all';
+    cardWhatsapp.className = 'cursor-pointer border-2 border-gray-200 rounded-xl p-5 transition-all hover:border-green-300';
+  } else {
+    cardPaystack.className = 'cursor-pointer border-2 border-gray-200 rounded-xl p-5 transition-all hover:border-gray-400';
+    cardWhatsapp.className = 'cursor-pointer border-2 border-green-500 bg-green-50 rounded-xl p-5 transition-all';
+  }
+}
+</script>
+{% endblock %}

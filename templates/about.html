@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}About Us — IronForge Nigeria{% endblock %}
+{% block meta_desc %}Learn about IronForge Nigeria's commitment to quality steel, our history, and what our customers say about our premium TMT and structural iron rods.{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="relative bg-forge-dark py-32 overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <img src="{{ url_for('static', filename='images/hero_bg.jpg') }}" alt="Steel mill background" class="w-full h-full object-cover opacity-15"/>
+  </div>
+  <div class="absolute inset-0 bg-forge-dark/80 z-10"></div>
+
+  <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fade-up">
+    <span class="section-label">Our Heritage</span>
+    <h1 class="font-display text-5xl sm:text-7xl text-white tracking-wide mb-6">
+      FORGED IN NIGERIA.<br/>
+      BUILT FOR THE FUTURE.
+    </h1>
+    <p class="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+      Since our founding, IronForge has been dedicated to one singular mission:
+      supplying the highest grade structural steel to developers, builders, and contractors across the nation.
+    </p>
+  </div>
+</section>
+
+<!-- OUR STORY -->
+<section class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div class="reveal">
+        <span class="section-label">Our Story</span>
+        <h2 class="font-display text-4xl sm:text-5xl text-forge-black tracking-wide mb-6">THE BENCHMARK FOR STRUCTURAL INTEGRITY.</h2>
+        <div class="w-12 h-0.5 bg-forge-red mb-8"></div>
+        <div class="space-y-5 text-gray-600 leading-relaxed text-sm">
+          <p>
+            At IronForge Nigeria, we believe that every great structure begins with an unwavering foundation. What started as an ambitious local distribution network has rapidly evolved into a leading national supplier of premium Thermo-Mechanically Treated (TMT) rebars and structural steel.
+          </p>
+          <p>
+            Our rigorous quality assurance means that every rod we dispatch exceeds both local and international engineering standards (BS 4449 and ASTM A615). We utilize state-of-the-art ultrasonic testing to guarantee flawless internal structures, superior ductility, and optimal carbon-equivalent levels for seamless weldability.
+          </p>
+          <p>
+            Whether reinforcing an expanding residential estate in Lagos, or laying the groundworks for commercial infrastructure in Abuja, IronForge delivers not just steel, but the peace of mind that comes with certified, uncompromising strength.
+          </p>
+        </div>
+
+        <div class="mt-10 rounded-xl overflow-hidden shadow-2xl aspect-[16/9] relative border border-white/10 group">
+          <img src="{{ url_for('static', filename='images/hero_bg.jpg') }}" class="w-full h-full object-cover filter contrast-125 brightness-75 group-hover:scale-105 transition-transform duration-700">
+          <div class="absolute inset-0 bg-gradient-to-tr from-forge-dark/90 via-forge-dark/40 to-forge-red/20 mix-blend-multiply"></div>
+          <p class="absolute bottom-5 left-6 text-white font-display tracking-widest text-xl shadow-black drop-shadow-md">Building the nation, one rod at a time.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 reveal">
+        <div class="bg-forge-dark border border-white/5 p-8 text-center">
+          <div class="font-display text-5xl text-forge-red mb-2">15+</div>
+          <div class="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Years Experience</div>
+        </div>
+        <div class="bg-forge-dark border border-white/5 p-8 text-center mt-8">
+          <div class="font-display text-5xl text-forge-red mb-2">12k</div>
+          <div class="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Tons Dispatched</div>
+        </div>
+        <div class="bg-forge-dark border border-white/5 p-8 text-center">
+          <div class="font-display text-5xl text-forge-red mb-2">500+</div>
+          <div class="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Major Projects</div>
+        </div>
+        <div class="bg-forge-dark border border-white/5 p-8 text-center mt-8">
+          <div class="font-display text-5xl text-forge-red mb-2">100%</div>
+          <div class="text-[10px] uppercase tracking-wider text-gray-500 font-bold">ISO Certified</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="py-24 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16 reveal">
+      <span class="section-label">Testimonials</span>
+      <h2 class="font-display text-4xl sm:text-5xl text-forge-black tracking-wide">TRUSTED BY INDUSTRY LEADERS</h2>
+    </div>
+
+    {% set reviews = [
+      {"name": "Engr. Tunde O.", "role": "Lead Structural Engineer", "text": "The TMT rebars from IronForge have been nothing short of exceptional. Yield strength consistently meets our structural engineering tests, and they deliver precisely when they say they will."},
+      {"name": "Chioma N.", "role": "Project Director", "text": "Finding reliable, certified grade 60 steel at scale was a major bottleneck for us. IronForge not only met our huge volume requirements but managed the logistics directly to our site."},
+      {"name": "Adebayo S.", "role": "Independent Developer", "text": "As an independent contractor, pricing and speed are everything. IronForge's online portal and WhatsApp ordering makes it so easy. Products arrive on time with no hidden fees."},
+      {"name": "Oluwafemi R.", "role": "Site Manager", "text": "Their customer service is incredible. We had a last-minute modification to our bulk order and the IronForge team handled it seamlessly. The steel is top-tier."},
+      {"name": "Nneka A.", "role": "Architect", "text": "I specify IronForge steel in my blueprints. Knowing the exact tensile strength limits makes designing high-rises much less stressful. They are the true standard."},
+      {"name": "Emeka C.", "role": "Civil Contractor", "text": "Fast dispatch! Literally arrived the next morning. You don't find this kind of transparency in the steel market easily. Highly recommended."},
+      {"name": "David M.", "role": "Procurement Head", "text": "We switched from our old supplier 6 months ago to IronForge. Not a single delayed shipment. The rust-resistance coating makes a huge difference during rainy seasons."},
+      {"name": "Kemi B.", "role": "Real Estate Developer", "text": "Building luxury estates requires premium materials. IronForge is the only brand we trust to ensure our structural integrity matches our premium aesthetic."},
+      {"name": "Ibrahim D.", "role": "Construction Consultant", "text": "I've audited their mill certificates and ISO compliance personally. IronForge doesn't cut corners. Period."},
+      {"name": "Samuel O.", "role": "Foreman", "text": "The rods bend exactly as calculated without micro-fracturing. It makes my team's job on site significantly safer and faster."},
+      {"name": "Fatima Y.", "role": "Operations Manager", "text": "Logistics are heavily simplified. Their fleet tracked our order directly to our remote site in Kano. Flawless execution."},
+      {"name": "Chucks E.", "role": "Structural Inspector", "text": "Every time I see 'IronForge' tagged on a batch of steel during site inspections, I know the foundation is solid. Consistently 60k PSI yield."},
+      {"name": "Victoria T.", "role": "Purchasing Officer", "text": "Their dynamic pricing structure for bulk orders saved our firm millions on our latest mixed-use continuous pour project."},
+      {"name": "Babatunde F.", "role": "Chief Engineer", "text": "Weldability is superb. The carbon equivalents on their TMT bars are strictly controlled, ensuring we don't have brittle joints."},
+      {"name": "Chinedu I.", "role": "Site Supervisor", "text": "Best iron rods in the Nigerian market right now. Nothing else comes close in terms of pure quality and reliability."},
+      {"name": "Alhaji Musa K.", "role": "Estate Funder", "text": "We finance developments and mandate our contractors use IronForge. It is an insurance policy for the durability of our investments."},
+      {"name": "Grace P.", "role": "Quantity Surveyor", "text": "Cost predictability is excellent. No hidden charges upon delivery, lengths are always exactly standard, no \"short-changing\"."},
+      {"name": "Emmanuel U.", "role": "Bridge Engineer", "text": "For critical public infrastructure, we used the Grade 75 rebars. Absolutely phenomenal structural resistance properties under load."},
+      {"name": "Zainab R.", "role": "Project Manager", "text": "The entire buying experience is frictionless. Adding to cart, paying via Paystack, receiving confirmation—it's finally a modern experience."},
+      {"name": "John B.", "role": "Mason", "text": "Very clean ribs on the bars. The concrete adhesion is solid. Will always ask my boss to buy this exact brand."},
+      {"name": "Dr. Ayodeji W.", "role": "Geotechnical Engineer", "text": "Combined with good piling, IronForge steel ensures absolute stability even in the marshy terrains of Lagos Island."},
+      {"name": "Ify N.", "role": "Logistics Coordinator", "text": "The delivery drivers were professional and arrived with proper offloading equipment. Saved us hours of manual labor."},
+      {"name": "Ken O.", "role": "CEO, Zenith Builds", "text": "A world-class operation right here in Nigeria. IronForge is elevating the entire construction industry benchmark."}
+    ] %}
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {% for review in reviews %}
+      <div class="testimonial-card reveal">
+        <p class="text-sm text-gray-600 mb-5 italic leading-relaxed relative z-10">
+          "{{ review.text }}"
+        </p>
+        <div class="font-bold text-sm text-forge-black uppercase tracking-wider">{{ review.name }}</div>
+        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">{{ review.role }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

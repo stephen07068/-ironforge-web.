@@ -1,0 +1,63 @@
+{% extends "admin/base.html" %}
+
+{% block page_title %}Order Management{% endblock %}
+
+{% block admin_content %}
+<div class="flex items-center gap-4 mb-8">
+  <a href="{{ url_for('admin.orders') }}" class="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest {% if active_status == 'all' %}bg-forge-black text-white{% else %}bg-gray-200 text-gray-600 hover:bg-gray-300{% endif %}">All</a>
+  <a href="{{ url_for('admin.orders', status='pending') }}" class="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest {% if active_status == 'pending' %}bg-forge-black text-white{% else %}bg-gray-200 text-gray-600 hover:bg-gray-300{% endif %}">Pending</a>
+  <a href="{{ url_for('admin.orders', status='paid') }}" class="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest {% if active_status == 'paid' %}bg-forge-black text-white{% else %}bg-gray-200 text-gray-600 hover:bg-gray-300{% endif %}">Paid</a>
+</div>
+
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+  {% if orders %}
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 border-b border-gray-100">
+      <tr>
+        <th class="text-left px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Order Ref</th>
+        <th class="text-left px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Customer</th>
+        <th class="text-left px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Items/Total</th>
+        <th class="text-right px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Status</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for o in orders %}
+      <tr class="hover:bg-gray-50 transition-colors">
+        <td class="px-6 py-4">
+          <div class="font-bold text-forge-black">{{ o.reference }}</div>
+          <div class="text-xs text-gray-400">{{ o.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+          <div class="text-[10px] font-bold uppercase mt-1 text-blue-500">{{ o.payment_method }}</div>
+        </td>
+        <td class="px-6 py-4">
+          <div class="font-bold">{{ o.customer_name }}</div>
+          <div class="text-xs text-gray-500">{{ o.customer_phone }}</div>
+          <div class="text-xs text-gray-400 truncate max-w-xs">{{ o.customer_address }}</div>
+        </td>
+        <td class="px-6 py-4">
+          <div class="font-semibold text-forge-black">{{ o.total_amount | naira }}</div>
+          <div class="text-xs text-gray-400">
+            {% for item in o.items %}
+              {{ item.quantity }}x {{ item.product.diameter }} {{ item.product.name }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+          </div>
+        </td>
+        <td class="px-6 py-4 text-right">
+          {% if o.payment_status == 'paid' %}
+            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block">Paid</span>
+          {% else %}
+            <form action="{{ url_for('admin.mark_paid', order_id=o.id) }}" method="post" class="inline-block" onsubmit="return confirm('Confirm payment received?');">
+              <button type="submit" class="bg-orange-100 hover:bg-green-500 hover:text-white text-orange-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block transition-colors cursor-pointer">
+                Mark Paid
+              </button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="p-12 text-center text-sm text-gray-500">No orders here yet!</div>
+  {% endif %}
+</div>
+{% endblock %}

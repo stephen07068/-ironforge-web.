@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login — IronForge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forge: { black:'#0a0a0a', dark:'#111117', red:'#dc2626' }
+          },
+          fontFamily: { sans:['Inter','sans-serif'], display:['Bebas Neue','sans-serif'] }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-forge-dark flex items-center justify-center min-h-screen font-sans relative">
+  <div class="absolute inset-0 z-0">
+    <img src="{{ url_for('static', filename='images/hero_bg.jpg') }}" class="w-full h-full object-cover opacity-10"/>
+  </div>
+  <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 relative z-10">
+    <div class="text-center mb-8">
+      <div class="font-display text-4xl tracking-widest text-forge-black">IRONFORGE</div>
+      <div class="text-[10px] font-semibold tracking-[5px] text-forge-red uppercase mt-1">Admin Access</div>
+    </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="mb-4 p-3 rounded text-sm text-center
+                      {% if category == 'success' %}bg-green-100 text-green-700
+                      {% else %}bg-red-100 text-red-700{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('admin.login') }}" class="space-y-5">
+      <div>
+        <label for="username" class="block text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-2">Username</label>
+        <input type="text" id="username" name="username" required
+               class="w-full border-gray-300 rounded px-4 py-3 text-sm focus:border-red-500 focus:ring-red-500"/>
+      </div>
+      <div>
+        <label for="password" class="block text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-2">Password</label>
+        <input type="password" id="password" name="password" required
+               class="w-full border-gray-300 rounded px-4 py-3 text-sm focus:border-red-500 focus:ring-red-500"/>
+      </div>
+      <div class="flex items-center justify-between mt-2">
+        <a href="{{ url_for('admin.forgot_password') }}" class="text-[10px] text-forge-red hover:underline font-semibold uppercase tracking-wider">Forgot Password?</a>
+      </div>
+      <button type="submit" class="w-full bg-forge-red text-white font-bold text-sm tracking-widest uppercase py-4 rounded hover:bg-red-700 transition-colors mt-6">
+        Login
+      </button>
+    </form>
+    <div class="mt-8 text-center pt-6 border-t border-gray-100">
+      <a href="{{ url_for('shop.index') }}" class="text-xs text-gray-400 hover:text-forge-red transition-colors">← Back to Store</a>
+    </div>
+  </div>
+</body>
+</html>

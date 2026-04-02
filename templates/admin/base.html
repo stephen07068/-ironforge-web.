@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Admin - IronForge{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forge: { black:'#0a0a0a', red:'#dc2626', light:'#f5f5f5' }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Bebas Neue', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-forge-light font-sans text-forge-black antialiased flex h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-forge-black text-white flex flex-col items-center py-8 flex-shrink-0 relative overflow-y-auto hidden md:flex">
+    <div class="font-display text-3xl tracking-[4px] mb-2">IRONFORGE</div>
+    <div class="text-[10px] text-forge-red tracking-[3px] font-bold uppercase mb-12">Admin Portal</div>
+
+    <nav class="flex flex-col gap-2 w-full px-4 flex-1">
+      <a href="{{ url_for('admin.dashboard') }}" class="px-4 py-3 rounded-xl transition-colors hover:bg-white/10 {% if request.endpoint == 'admin.dashboard' %}bg-white/10 font-bold{% else %}text-gray-400{% endif %}">Dashboard</a>
+      <a href="{{ url_for('admin.orders') }}" class="px-4 py-3 rounded-xl transition-colors hover:bg-white/10 {% if request.endpoint == 'admin.orders' %}bg-white/10 font-bold{% else %}text-gray-400{% endif %}">Orders</a>
+      <a href="{{ url_for('admin.products') }}" class="px-4 py-3 rounded-xl transition-colors hover:bg-white/10 {% if request.endpoint == 'admin.products' %}bg-white/10 font-bold{% else %}text-gray-400{% endif %}">Products</a>
+    </nav>
+
+    <div class="mt-auto px-4 w-full">
+         <a href="{{ url_for('admin.logout') }}" class="block px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors w-full text-left font-semibold">Sign Out</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto px-8 py-10 relative">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-6 space-y-2">
+        {% for category, msg in messages %}
+          <div class="px-4 py-3 rounded-lg text-sm font-semibold {% if category == 'success' %}bg-green-100 text-green-800{% elif category == 'danger' or category == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+            {{ msg }}
+          </div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <h1 class="font-display text-4xl mb-8">{% block page_title %}Dashboard{% endblock %}</h1>
+    {% block admin_content %}{% endblock %}
+  </main>
+</body>
+</html>

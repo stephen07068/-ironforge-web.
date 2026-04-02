@@ -1,0 +1,26 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment Variables backups
+*.env.backup
+*.env.bak
+
+# Python Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local Databases
+instance/
+*.sqlite3
+*.db
+
+# OS Generated
+.DS_Store
+Thumbs.db

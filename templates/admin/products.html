@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+{% block title %}Products — IronForge Admin{% endblock %}
+{% block page_title %}Products Inventory{% endblock %}
+
+{% block admin_content %}
+<div class="flex items-center justify-between mb-8">
+  <div class="text-sm text-gray-500">Manage your product catalog.</div>
+  <a href="{{ url_for('admin.new_product') }}"
+     class="bg-forge-black text-white font-semibold text-xs tracking-widest uppercase px-5 py-3 rounded-lg hover:bg-forge-red transition-colors">
+    + Add Product
+  </a>
+</div>
+
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+  {% if products %}
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 border-b border-gray-100">
+      <tr>
+        <th class="text-left px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Product</th>
+        <th class="text-left px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Price</th>
+        <th class="text-left px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Status</th>
+        <th class="text-right px-6 py-3 text-[10px] font-bold tracking-widest uppercase text-gray-400">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for p in products %}
+      <tr class="hover:bg-gray-50 transition-colors">
+        <td class="px-6 py-4 flex items-center gap-4">
+          <img src="{{ url_for('static', filename='images/products/' ~ p.image) }}" class="w-12 h-12 rounded object-cover bg-gray-100"/>
+          <div>
+            <div class="font-bold text-forge-black">{{ p.name }}</div>
+            <div class="text-xs text-gray-400">{{ p.diameter }} &bull; {{ p.grade }}</div>
+          </div>
+        </td>
+        <td class="px-6 py-4 font-semibold text-forge-black">{{ p.price | naira }}</td>
+        <td class="px-6 py-4">
+          {% if p.is_featured %}
+            <span class="text-forge-red font-bold text-xs">★ Featured</span>
+          {% else %}
+            <span class="text-gray-400 text-xs">Standard</span>
+          {% endif %}
+        </td>
+        <td class="px-6 py-4 text-right">
+          <a href="{{ url_for('admin.edit_product', product_id=p.id) }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800 mr-4">Edit</a>
+          <form action="{{ url_for('admin.delete_product', product_id=p.id) }}" method="post" class="inline" onsubmit="return confirm('Are you sure you want to delete this product?');">
+            <button type="submit" class="text-xs font-semibold text-red-600 hover:text-red-800">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="text-center py-20 text-gray-400">
+    <div class="text-5xl mb-4">📦</div>
+    <p class="mb-4">No products in inventory.</p>
+    <a href="{{ url_for('admin.new_product') }}" class="text-forge-red font-semibold hover:underline text-sm">Add your first product →</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

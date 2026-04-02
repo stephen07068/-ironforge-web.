@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="{% block meta_desc %}IronForge Nigeria — Premium iron rods and steel reinforcement for strong foundations. Best prices in Nigeria.{% endblock %}"/>
+  <title>{% block title %}IronForge Nigeria{% endblock %}</title>
+
+  <meta name="theme-color" content="#0a0a0a"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+
+  <!-- Tailwind CDN -->
+  <script>
+    tailwind = { config: {
+      theme: {
+        extend: {
+          colors: {
+            forge: {
+              black:  '#0a0a0a',
+              dark:   '#111117',
+              red:    '#dc2626',
+              steel:  '#8a8f9b',
+              light:  '#f5f5f5',
+              card:   '#1a1a22',
+            }
+          },
+          fontFamily: {
+            sans:    ['Inter', 'sans-serif'],
+            display: ['Bebas Neue', 'sans-serif'],
+          }
+        }
+      }
+    }};
+  </script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}?v=2.0"/>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-white font-sans text-forge-black antialiased">
+
+  <!-- ═══════════════════════════════════════════════════════ NAVBAR -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-forge-dark border-b border-white/5 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="{{ url_for('shop.index') }}" class="flex items-center gap-2 flex-shrink-0 mt-1">
+          <span class="font-display text-4xl tracking-widest text-white">IRONFORGE</span>
+          <span class="hidden sm:block text-xs font-semibold tracking-[4px] text-forge-red uppercase mt-1">NIGERIA</span>
+        </a>
+
+        <!-- Desktop nav links -->
+        <div class="hidden md:flex items-center gap-8 mt-1">
+          <a href="{{ url_for('shop.index') }}"
+             class="text-sm font-semibold tracking-widest uppercase transition-colors
+                    {% if request.endpoint == 'shop.index' %}text-forge-red{% else %}text-gray-400 hover:text-white{% endif %}">
+            Home
+          </a>
+          <a href="{{ url_for('shop.shop') }}"
+             class="text-sm font-semibold tracking-widest uppercase transition-colors
+                    {% if request.endpoint == 'shop.shop' %}text-forge-red{% else %}text-gray-400 hover:text-white{% endif %}">
+            Shop
+          </a>
+          <a href="{{ url_for('shop.about') }}"
+             class="text-sm font-semibold tracking-widest uppercase transition-colors
+                    {% if request.endpoint == 'shop.about' %}text-forge-red{% else %}text-gray-400 hover:text-white{% endif %}">
+            About
+          </a>
+          <a href="{{ url_for('shop.index') }}#contact"
+             class="text-sm font-semibold tracking-widest uppercase text-gray-400 hover:text-white transition-colors">
+            Contact
+          </a>
+        </div>
+
+        <!-- Right actions -->
+        <div class="flex items-center gap-3">
+          <!-- Cart -->
+          <a href="{{ url_for('cart.view_cart') }}"
+             class="relative flex items-center justify-center w-10 h-10 rounded hover:bg-white/10 transition-colors text-gray-300 hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/>
+            </svg>
+            {% if cart_count > 0 %}
+            <span id="cart-badge"
+                  class="absolute -top-1 -right-1 w-5 h-5 bg-forge-red text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              {{ cart_count }}
+            </span>
+            {% else %}
+            <span id="cart-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-forge-red text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+            {% endif %}
+          </a>
+
+          <!-- GET A QUOTE CTA -->
+          <a href="https://wa.me/2347044891567?text=Hello%20IronForge%2C%20I%20need%20a%20bulk%20quote"
+             target="_blank"
+             class="hidden sm:inline-flex items-center gap-1.5 bg-forge-red hover:bg-red-700 text-white text-[10px] font-bold tracking-widest uppercase px-4 py-2 rounded transition-colors">
+            Get a Quote
+          </a>
+
+          <!-- Mobile menu button -->
+          <button id="mobile-menu-btn"
+                  class="md:hidden flex items-center justify-center w-10 h-10 rounded hover:bg-white/10 text-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-forge-dark border-t border-white/10 px-4 py-4 space-y-4 shadow-lg">
+      <a href="{{ url_for('shop.index') }}" class="block text-base font-semibold tracking-widest uppercase {% if request.endpoint == 'shop.index' %}text-forge-red{% else %}text-gray-400 hover:text-forge-red{% endif %} transition-colors">Home</a>
+      <a href="{{ url_for('shop.shop') }}" class="block text-base font-semibold tracking-widest uppercase {% if request.endpoint == 'shop.shop' %}text-forge-red{% else %}text-gray-400 hover:text-forge-red{% endif %} transition-colors">Shop</a>
+      <a href="{{ url_for('shop.about') }}" class="block text-base font-semibold tracking-widest uppercase {% if request.endpoint == 'shop.about' %}text-forge-red{% else %}text-gray-400 hover:text-forge-red{% endif %} transition-colors">About</a>
+      <a href="{{ url_for('shop.index') }}#contact" class="block text-base font-semibold tracking-widest uppercase text-gray-400 hover:text-forge-red transition-colors">Contact</a>
+      <a href="https://wa.me/2347044891567?text=Hello%20IronForge%2C%20I%20need%20a%20bulk%20quote"
+         target="_blank"
+         class="block w-full text-center bg-forge-red hover:bg-red-700 text-white text-xs font-bold tracking-widest uppercase px-4 py-2.5 rounded transition-colors">
+        Get a Quote
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main content (offset for fixed navbar) -->
+  <main class="pt-16">
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 space-y-2">
+          {% for category, message in messages %}
+            <div class="flash-msg flex items-center gap-3 px-4 py-3 rounded text-sm font-medium
+                        {% if category == 'success' %}bg-green-50 text-green-800 border border-green-200
+                        {% elif category == 'danger' %}bg-red-50 text-red-800 border border-red-200
+                        {% elif category == 'warning' %}bg-yellow-50 text-yellow-800 border border-yellow-200
+                        {% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
+              <span>{{ message }}</span>
+              <button onclick="this.parentElement.remove()" class="ml-auto text-current opacity-60 hover:opacity-100">✕</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════ FOOTER -->
+  <footer class="bg-forge-dark text-white mt-0">
+    <!-- Red top bar -->
+    <div class="h-1 bg-forge-red"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        <!-- Brand -->
+        <div>
+          <div class="font-display text-2xl tracking-widest mb-1">IRONFORGE</div>
+          <div class="text-[10px] font-bold tracking-[4px] uppercase text-forge-red mb-4">NIGERIA</div>
+          <p class="text-gray-500 text-sm leading-relaxed">
+            Precision structural steel for the next generation of Nigerian architecture and development.
+          </p>
+          <div class="flex gap-3 mt-5">
+            <a href="https://wa.me/2347044891567" target="_blank"
+               class="w-9 h-9 rounded bg-white/5 hover:bg-forge-red flex items-center justify-center transition-colors border border-white/10">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.141 1.548 5.875L.057 23.448a.5.5 0 0 0 .634.608l5.82-1.527A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.67-.5-5.21-1.376l-.368-.212-3.813 1 .97-3.727-.232-.381A9.938 9.938 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+              </svg>
+            </a>
+            <a href="mailto:miracleinvestment32@gmail.com"
+               class="w-9 h-9 rounded bg-white/5 hover:bg-forge-red flex items-center justify-center transition-colors border border-white/10">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Inventory -->
+        <div>
+          <h4 class="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-5">Inventory</h4>
+          <ul class="space-y-2.5 text-sm text-gray-500">
+            <li><a href="{{ url_for('shop.shop', category='tmt_bars') }}" class="hover:text-forge-red transition-colors">TMT Bars</a></li>
+            <li><a href="{{ url_for('shop.shop', category='round_bars') }}" class="hover:text-forge-red transition-colors">Round Bars</a></li>
+            <li><a href="{{ url_for('shop.shop', category='square_bars') }}" class="hover:text-forge-red transition-colors">Square Bars</a></li>
+            <li><a href="{{ url_for('shop.shop') }}" class="hover:text-forge-red transition-colors">Binding Systems</a></li>
+          </ul>
+        </div>
+
+        <!-- Corporate -->
+        <div>
+          <h4 class="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-5">Corporate</h4>
+          <ul class="space-y-2.5 text-sm text-gray-500">
+            <li><a href="{{ url_for('shop.about') }}" class="hover:text-forge-red transition-colors">About Us</a></li>
+            <li><a href="https://wa.me/2347044891567?text=Hello%20IronForge%2C%20I%20need%20a%20bulk%20quote" target="_blank" class="hover:text-forge-red transition-colors">Bulk Orders</a></li>
+            <li><a href="#" class="hover:text-forge-red transition-colors">Privacy Policy</a></li>
+            <li><a href="#" class="hover:text-forge-red transition-colors">Terms of Service</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div id="contact">
+          <h4 class="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-5">Newsletter</h4>
+          <p class="text-sm text-gray-500 mb-4">Engineering updates delivered to you.</p>
+          <form id="newsletter-form" class="flex gap-2" action="{{ url_for('shop.subscribe') }}" method="post">
+            <input type="email" name="email" required placeholder="Enter email"
+                   class="flex-1 bg-white/5 border border-white/10 rounded px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-forge-red transition-colors"/>
+            <button type="submit"
+                    class="bg-forge-red hover:bg-red-700 text-white px-4 py-2 rounded font-bold text-sm transition-colors">→</button>
+          </form>
+          <div class="mt-5 space-y-1.5 text-sm text-gray-500">
+            <p>📞 <a href="tel:+2347044891567" class="hover:text-white transition-colors">07044891567</a></p>
+            <p>✉️ <a href="mailto:miracleinvestment32@gmail.com" class="hover:text-white transition-colors">miracleinvestment32@gmail.com</a></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-white/5 mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <p class="text-xs text-gray-700">© 2026 IronForge Industries. Precision Engineered.</p>
+        <p class="text-xs text-gray-700">Built for Nigerian Construction Excellence.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Custom JS -->
+  <script src="{{ url_for('static', filename='js/main.js') }}?v=2.0" defer></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

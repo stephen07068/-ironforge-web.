@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Your Cart — IronForge Nigeria{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+  <div class="mb-10">
+    <span class="section-label">Review Order</span>
+    <h1 class="font-display text-5xl text-forge-black tracking-wide">YOUR CART</h1>
+  </div>
+
+  {% if items %}
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+    <!-- Cart items -->
+    <div class="lg:col-span-2 space-y-4">
+      {% for item in items %}
+      <div class="flex gap-4 bg-white border border-gray-100 rounded p-4 shadow-sm hover:border-forge-red transition-colors">
+        <!-- Image -->
+        <a href="{{ url_for('shop.product_detail', slug=item.product.slug) }}"
+           class="w-24 h-24 rounded bg-forge-dark overflow-hidden flex-shrink-0">
+          <img src="{{ url_for('static', filename='images/products/' ~ item.product.image) }}"
+               alt="{{ item.product.name }}"
+               class="w-full h-full object-cover opacity-90"/>
+        </a>
+        <!-- Details -->
+        <div class="flex-1 min-w-0">
+          <div class="text-[9px] font-semibold tracking-[3px] uppercase text-gray-400 mb-1">
+            {{ item.product.diameter }} • {{ item.product.grade }} • {{ item.unit }}
+          </div>
+          <a href="{{ url_for('shop.product_detail', slug=item.product.slug) }}">
+            <h3 class="font-bold text-sm uppercase tracking-wide text-forge-black hover:text-forge-red transition-colors truncate">
+              {{ item.product.name }}
+            </h3>
+          </a>
+          <div class="flex items-center justify-between mt-3">
+            <!-- Qty controls -->
+            <form action="{{ url_for('cart.update_cart', product_key=item.key) }}" method="post" class="flex items-center gap-1">
+              <button type="submit" name="qty" value="{{ item.qty - 1 }}"
+                      class="w-8 h-8 rounded border border-gray-200 text-gray-500 hover:bg-gray-100 font-bold text-sm transition-colors">−</button>
+              <span class="w-10 text-center text-sm font-semibold">{{ item.qty }}</span>
+              <button type="submit" name="qty" value="{{ item.qty + 1 }}"
+                      class="w-8 h-8 rounded border border-gray-200 text-gray-500 hover:bg-gray-100 font-bold text-sm transition-colors">+</button>
+            </form>
+            <!-- Subtotal + Remove -->
+            <div class="flex items-center gap-4">
+              <span class="font-bold text-base text-forge-black">{{ item.subtotal | naira }}</span>
+              <form action="{{ url_for('cart.remove_from_cart', product_key=item.key) }}" method="post">
+                <button type="submit" class="text-gray-300 hover:text-forge-red transition-colors" title="Remove">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+      <div class="flex items-center justify-between pt-2">
+        <a href="{{ url_for('shop.shop') }}" class="text-xs font-semibold text-gray-400 hover:text-forge-red transition-colors flex items-center gap-1">
+          ← Continue Shopping
+        </a>
+        <form action="{{ url_for('cart.clear_cart') }}" method="post">
+          <button type="submit" class="text-xs font-semibold text-gray-400 hover:text-forge-red transition-colors">
+            Clear Cart
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Order summary -->
+    <div>
+      <div class="bg-forge-dark rounded p-6 sticky top-24 border border-white/5">
+        <h2 class="font-bold text-sm tracking-widest uppercase text-white mb-6">Order Summary</h2>
+
+        <div class="space-y-3 mb-6">
+          {% for item in items %}
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-500 truncate max-w-[160px]">{{ item.product.name }} ×{{ item.qty }} ({{ 'Ton' if item.unit == 'tons' else 'Rod' }})</span>
+            <span class="font-semibold text-white ml-2">{{ item.subtotal | naira }}</span>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="border-t border-white/10 pt-4 mb-6">
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-sm uppercase tracking-wider text-white">Total</span>
+            <span class="font-bold text-2xl text-forge-red">{{ total | naira }}</span>
+          </div>
+          <p class="text-xs text-gray-600 mt-1">Price excludes delivery. Confirm at checkout.</p>
+        </div>
+
+        <!-- Checkout button -->
+        <a href="{{ url_for('orders.checkout') }}"
+           class="block w-full bg-forge-red text-white font-bold text-sm tracking-widest uppercase text-center py-4 rounded hover:bg-red-700 transition-colors mb-3">
+          Proceed to Checkout
+        </a>
+
+        <!-- WhatsApp direct order -->
+        {% set wa_lines = [] %}
+        {% for item in items %}
+          {% set _ = wa_lines.append(item.product.name ~ ' x' ~ item.qty ~ ' = ' ~ (item.subtotal | naira)) %}
+        {% endfor %}
+        <a href="https://wa.me/2347044891567?text={{ ('🔩 ORDER REQUEST%0A' ~ wa_lines | join('%0A') ~ '%0A%0ATOTAL: ' ~ (total | naira)) }}"
+           target="_blank"
+           class="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white font-bold text-sm tracking-widest uppercase py-4 rounded transition-colors">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a8.9 8.9 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.141 1.548 5.875L.057 23.448a.5.5 0 0 0 .634.608l5.82-1.527A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.67-.5-5.21-1.376l-.368-.212-3.813 1 .97-3.727-.232-.381A9.938 9.938 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+          </svg>
+          Order via WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- Empty cart -->
+  <div class="text-center py-28">
+    <div class="text-7xl mb-6">🛒</div>
+    <h2 class="text-2xl font-bold text-forge-black mb-3">Your cart is empty</h2>
+    <p class="text-gray-500 text-sm mb-8">Add some iron rods to get started.</p>
+    <a href="{{ url_for('shop.shop') }}" class="btn-red">Browse Products</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

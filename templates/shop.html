@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Shop Iron Rods — IronForge Nigeria{% endblock %}
+{% block meta_desc %}Browse all iron rods and rebars. TMT bars, round bars, square bars. Grade 60 & 75 available. Buy online in Nigeria with Paystack or WhatsApp.{% endblock %}
+
+{% block content %}
+
+<!-- Page header -->
+<div class="bg-forge-dark border-b border-white/5 py-14">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <span class="section-label">Industrial Solutions</span>
+    <h1 class="font-display text-5xl sm:text-6xl text-white tracking-wide mb-3">PRECISION IRON RODS</h1>
+    <p class="text-gray-500 text-sm max-w-xl">High-tensile reinforcement steel engineered for structural integrity. Batch-tested for yield strength and ductility.</p>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+  <!-- Filters -->
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 mb-10">
+    <!-- Category tabs -->
+    <div class="flex flex-wrap gap-2">
+      {% set categories = [('all','All Inventory'),('tmt_bars','TMT Bars'),('round_bars','Round Bars'),('square_bars','Square Bars')] %}
+      {% for cat_key, cat_label in categories %}
+      <a href="{{ url_for('shop.shop', category=cat_key, sort=active_sort) }}"
+         class="px-4 py-2 text-xs font-semibold tracking-wider uppercase rounded border transition-all duration-200
+                {% if active_category == cat_key %}bg-forge-red text-white border-forge-red
+                {% else %}border-gray-200 text-gray-500 hover:border-forge-red hover:text-forge-red{% endif %}">
+        {{ cat_label }}
+      </a>
+      {% endfor %}
+    </div>
+
+    <!-- Sort dropdown -->
+    <div class="flex items-center gap-3">
+      <span class="text-xs text-gray-400 uppercase tracking-wider hidden sm:block">Sort</span>
+      <select id="sort-select" onchange="window.location=this.value"
+              class="border border-gray-200 text-xs font-medium text-gray-700 rounded px-3 py-2 focus:outline-none focus:border-forge-red">
+        <option value="{{ url_for('shop.shop', category=active_category, sort='default') }}"  {% if active_sort=='default'  %}selected{% endif %}>Default</option>
+        <option value="{{ url_for('shop.shop', category=active_category, sort='price_asc') }}" {% if active_sort=='price_asc' %}selected{% endif %}>Price: Low → High</option>
+        <option value="{{ url_for('shop.shop', category=active_category, sort='price_desc') }}"{% if active_sort=='price_desc'%}selected{% endif %}>Price: High → Low</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Product grid -->
+  {% if products %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for product in products %}
+    <div class="product-card reveal product-img-wrap flex flex-col">
+
+      <!-- Image -->
+      <a href="{{ url_for('shop.product_detail', slug=product.slug) }}" class="block relative bg-forge-dark aspect-[4/3] overflow-hidden">
+        {% if product.badge %}
+        <span class="absolute top-3 left-3 z-10 text-[9px] font-bold tracking-[3px] uppercase px-2 py-1 rounded-sm
+                     {% if product.badge == 'POPULAR' %}bg-forge-red text-white
+                     {% elif product.badge == 'IN STOCK' %}bg-emerald-500 text-white
+                     {% else %}bg-white/15 text-white{% endif %}">
+          {{ product.badge }}
+        </span>
+        {% endif %}
+        {% if product.grade %}
+        <span class="absolute top-3 right-3 z-10 text-[9px] font-bold tracking-[2px] uppercase px-2 py-1 bg-black/60 text-gray-300 rounded-sm">
+          {{ product.grade }}
+        </span>
+        {% endif %}
+        <img src="{{ url_for('static', filename='images/products/' ~ product.image) }}"
+             alt="{{ product.name }}"
+             loading="lazy"
+             decoding="async"
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"/>
+      </a>
+
+      <!-- Info -->
+      <div class="p-5 flex flex-col flex-1">
+        <div class="text-[9px] font-semibold tracking-[3px] uppercase text-gray-400 mb-1.5">
+          {{ product.diameter }} • {{ product.grade }}
+        </div>
+        <a href="{{ url_for('shop.product_detail', slug=product.slug) }}">
+          <h2 class="font-bold text-sm tracking-wider uppercase text-forge-black hover:text-forge-red transition-colors mb-2">
+            {{ product.name }}
+          </h2>
+        </a>
+        <p class="text-xs text-gray-500 leading-relaxed line-clamp-2 flex-1">{{ product.description }}</p>
+
+        <div class="flex items-center justify-between mt-5 pt-4 border-t border-gray-100">
+          <div>
+            <span class="font-bold text-lg text-forge-black">{{ product.price | naira }}</span>
+            <span class="text-[10px] text-gray-400 uppercase tracking-wider ml-1">/ rod</span>
+          </div>
+          <form action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" method="post">
+            <button type="submit"
+                    class="add-to-cart-btn bg-forge-red text-white text-xs font-bold tracking-widest uppercase px-4 py-2.5 rounded hover:bg-red-700 transition-colors duration-200">
+              Add to Cart
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <!-- Empty state -->
+  <div class="text-center py-24">
+    <div class="text-5xl mb-4">🔩</div>
+    <h3 class="text-xl font-bold text-forge-black mb-2">No products in this category</h3>
+    <p class="text-gray-500 text-sm mb-6">Try another category or check back soon.</p>
+    <a href="{{ url_for('shop.shop') }}"
+       class="btn-red">View All Products</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

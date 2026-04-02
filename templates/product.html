@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} — IronForge Nigeria{% endblock %}
+{% block meta_desc %}Buy {{ product.name }} in Nigeria. {{ product.diameter }} diameter, {{ product.grade }}. Price: {{ product.price | naira }}. Order online with Paystack or WhatsApp.{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider mb-10">
+    <a href="{{ url_for('shop.index') }}" class="hover:text-forge-red transition-colors">Inventory</a>
+    <span>›</span>
+    <a href="{{ url_for('shop.shop') }}" class="hover:text-forge-red transition-colors">Reinforcement Steel</a>
+    <span>›</span>
+    <span class="text-forge-black font-semibold">{{ product.name }}</span>
+  </nav>
+
+  <!-- Main product layout -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
+
+    <!-- Left: Images -->
+    <div>
+      <div class="relative bg-forge-dark overflow-hidden aspect-square mb-4 rounded">
+        {% if product.badge %}
+        <div class="absolute top-4 left-4 z-10 flex flex-col gap-2">
+          <span class="text-[9px] font-bold tracking-[3px] uppercase px-3 py-1.5 bg-forge-red text-white rounded-sm">
+            {{ product.grade }}
+          </span>
+          <span class="text-[9px] font-bold tracking-[3px] uppercase px-3 py-1.5 bg-emerald-500 text-white rounded-sm">
+            HIGH TENSILE
+          </span>
+        </div>
+        {% endif %}
+        <img id="main-image"
+             src="{{ url_for('static', filename='images/products/' ~ product.image) }}"
+             alt="{{ product.name }}"
+             class="w-full h-full object-cover"/>
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <button onclick="setMainImage('{{ url_for('static', filename='images/products/' ~ product.image) }}')"
+                class="thumb-btn bg-forge-dark rounded overflow-hidden aspect-square ring-2 ring-forge-red">
+          <img src="{{ url_for('static', filename='images/products/' ~ product.image) }}"
+               alt="" class="w-full h-full object-cover opacity-80"/>
+        </button>
+        <button class="bg-gray-100 rounded overflow-hidden aspect-square border border-gray-200">
+          <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">Side View</div>
+        </button>
+        <button class="bg-gray-100 rounded overflow-hidden aspect-square border border-gray-200">
+          <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">Detail</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Details -->
+    <div>
+      <h1 class="font-display text-5xl text-forge-black tracking-wide mb-4">{{ product.name }}</h1>
+      <p class="text-gray-500 text-sm leading-relaxed mb-8">{{ product.description }}</p>
+
+      <!-- Specs grid -->
+      <div class="grid grid-cols-2 gap-4 py-6 border-t border-b border-gray-100 mb-8">
+        {% if product.diameter %}
+        <div>
+          <div class="text-[10px] font-bold tracking-[4px] uppercase text-gray-400 mb-1">Diameter</div>
+          <div class="font-semibold text-forge-black">{{ product.diameter }}</div>
+        </div>
+        {% endif %}
+        {% if product.length %}
+        <div>
+          <div class="text-[10px] font-bold tracking-[4px] uppercase text-gray-400 mb-1">Standard Length</div>
+          <div class="font-semibold text-forge-black">{{ product.length }}</div>
+        </div>
+        {% endif %}
+        {% if product.weight %}
+        <div>
+          <div class="text-[10px] font-bold tracking-[4px] uppercase text-gray-400 mb-1">Weight / Bundle</div>
+          <div class="font-semibold text-forge-black">{{ product.weight }}</div>
+        </div>
+        {% endif %}
+        {% if product.compliance %}
+        <div>
+          <div class="text-[10px] font-bold tracking-[4px] uppercase text-gray-400 mb-1">Compliance</div>
+          <div class="font-semibold text-forge-black">{{ product.compliance }}</div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Price -->
+      <div class="mb-6">
+        <div class="text-[10px] font-bold tracking-[4px] uppercase text-gray-400 mb-1">Unit Pricing</div>
+        <div class="flex items-baseline gap-2">
+          <span class="font-bold text-4xl text-forge-black" id="dynamic-price">{{ product.price | naira }}</span>
+          <span class="text-sm text-gray-400" id="dynamic-unit-label">per rod</span>
+        </div>
+      </div>
+
+      <!-- Add to cart form -->
+      <form action="{{ url_for('cart.add_to_cart', product_id=product.id) }}" method="post" class="mb-4">
+        <div class="flex flex-col sm:flex-row gap-4 mb-4">
+          <div class="flex items-center gap-3 flex-1">
+             <div class="text-[10px] font-bold tracking-[4px] uppercase text-gray-400">UNIT</div>
+             <select name="unit" class="flex-1 bg-white border border-gray-200 rounded px-3 h-10 text-sm font-semibold focus:outline-none focus:border-forge-red" onchange="updatePriceDisplay(this)">
+               <option value="pieces" data-price="{{ product.price | naira }}" data-label="per rod">Pieces (Rods)</option>
+               <option value="tons" data-price="{{ product.price_per_ton_formatted() }}" data-label="per ton">Tons (1,000kg)</option>
+             </select>
+          </div>
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <div class="text-[10px] font-bold tracking-[4px] uppercase text-gray-400 hidden sm:block">QTY</div>
+            <div class="flex items-center border border-gray-200 rounded overflow-hidden w-full sm:w-auto bg-white">
+              <button type="button" onclick="decrementQty()" class="w-10 h-10 text-gray-500 hover:bg-gray-100 font-bold transition-colors">−</button>
+              <input type="number" name="qty" id="qty-input" value="1" min="1" max="999"
+                     class="w-12 h-10 text-center border-0 focus:outline-none text-sm font-semibold"/>
+              <button type="button" onclick="incrementQty()" class="w-10 h-10 text-gray-500 hover:bg-gray-100 font-bold transition-colors">+</button>
+            </div>
+          </div>
+        </div>
+        <button type="submit"
+                class="add-to-cart-btn w-full bg-forge-red text-white font-bold text-sm tracking-widest uppercase py-4 rounded hover:bg-red-700 transition-colors mb-3">
+          🛒 Add to Cart
+        </button>
+      </form>
+
+      <!-- WhatsApp button -->
+      <a href="https://wa.me/2347044891567?text={{ ('Hello IronForge! I want to order: ' ~ product.name ~ ' (Price: ' ~ (product.price | naira) ~ '). Please provide details.') | urlencode }}"
+         target="_blank"
+         class="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white font-bold text-sm tracking-widest uppercase py-4 rounded transition-colors">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a8.9 8.9 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.139.565 4.141 1.548 5.875L.057 23.448a.5.5 0 0 0 .634.608l5.82-1.527A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.67-.5-5.21-1.376l-.368-.212-3.813 1 .97-3.727-.232-.381A9.938 9.938 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+        </svg>
+        Order via WhatsApp
+      </a>
+
+      <!-- Guarantees -->
+      <div class="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-100">
+        <div class="flex items-start gap-3">
+          <span class="text-forge-red text-xl mt-0.5">🚚</span>
+          <div>
+            <div class="text-xs font-bold uppercase tracking-wide text-forge-black">Express Dispatch</div>
+            <div class="text-xs text-gray-500 mt-0.5">24–48 hour logistics fleet for regional sites.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="text-forge-red text-xl mt-0.5">✅</span>
+          <div>
+            <div class="text-xs font-bold uppercase tracking-wide text-forge-black">Certified Grade</div>
+            <div class="text-xs text-gray-500 mt-0.5">Full mill certification provided with order.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- TECHNICAL SECTION -->
+  <div class="border-t border-gray-100 pt-16">
+    <h2 class="font-bold text-xs tracking-[5px] uppercase text-gray-400 mb-10">Technical Superiority</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+      <div class="space-y-8">
+        <div class="border-l-2 border-forge-red pl-6">
+          <h3 class="font-bold text-sm tracking-wide uppercase text-forge-black mb-2">Thermo-Cooling Technology</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Our iron rods undergo a rapid water-quenching process which creates a hardened peripheral martensite layer while keeping the core soft and ductile, resulting in exceptionally yield strength.</p>
+        </div>
+        <div class="border-l-2 border-gray-200 pl-6">
+          <h3 class="font-bold text-sm tracking-wide uppercase text-forge-black mb-2">Precision Ribbed Profile</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Engineered with optimised rib patterns to ensure a maximum bond with concrete, minimising structural slippage even under high seismic stress.</p>
+        </div>
+      </div>
+
+      <div class="bg-forge-light rounded p-8">
+        <div class="text-[10px] font-bold tracking-[5px] uppercase text-forge-red mb-2">∧</div>
+        <h3 class="font-bold text-lg text-forge-black mb-2">Architectural Grade</h3>
+        <p class="text-sm text-gray-500 mb-6">Recommended for high-rise residential frameworks and heavy industrial foundations.</p>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between border-b border-gray-200 pb-3">
+            <span class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Elongation</span>
+            <span class="font-semibold text-forge-black text-sm">Min 14.5%</span>
+          </div>
+          <div class="flex items-center justify-between border-b border-gray-200 pb-3">
+            <span class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Yield Strength</span>
+            <span class="font-semibold text-forge-black text-sm">60,000 PSI</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold tracking-widest uppercase text-gray-400">Bond Diameter</span>
+            <span class="font-semibold text-forge-black text-sm">{{ product.diameter or '3d (min)' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- RELATED PRODUCTS -->
+  {% if related_products %}
+  <div class="mt-20 border-t border-gray-100 pt-16">
+    <h2 class="font-bold text-xs tracking-[5px] uppercase text-gray-400 mb-8">You May Also Need</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      {% for rp in related_products %}
+      <a href="{{ url_for('shop.product_detail', slug=rp.slug) }}"
+         class="group flex gap-4 items-center bg-forge-light rounded p-4 hover:shadow-md transition-all duration-300 border border-transparent hover:border-forge-red">
+        <div class="w-20 h-20 rounded bg-forge-dark overflow-hidden flex-shrink-0">
+          <img src="{{ url_for('static', filename='images/products/' ~ rp.image) }}"
+               alt="{{ rp.name }}"
+               loading="lazy"
+               class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"/>
+        </div>
+        <div>
+          <div class="text-[9px] font-semibold tracking-widest uppercase text-gray-400 mb-1">{{ rp.diameter }}</div>
+          <div class="font-bold text-xs uppercase tracking-wide text-forge-black group-hover:text-forge-red transition-colors">{{ rp.name }}</div>
+          <div class="font-bold text-sm text-forge-black mt-1">{{ rp.price | naira }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function updatePriceDisplay(selectElement) {
+  const option = selectElement.options[selectElement.selectedIndex];
+  document.getElementById('dynamic-price').innerText = option.getAttribute('data-price');
+  document.getElementById('dynamic-unit-label').innerText = option.getAttribute('data-label');
+}
+function setMainImage(src) {
+  document.getElementById('main-image').src = src;
+}
+function incrementQty() {
+  const input = document.getElementById('qty-input');
+  if (parseInt(input.value) < 999) input.value = parseInt(input.value) + 1;
+}
+function decrementQty() {
+  const input = document.getElementById('qty-input');
+  if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1;
+}
+</script>
+{% endblock %}
