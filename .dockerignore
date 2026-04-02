@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local database files
+instance/
+*.db
+*.sqlite3
+
+# Environment secrets – injected at runtime via Cloud Run
+.env
+.env.*
+
+# Git
+.git/
+.gitignore
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Firebase / deployment artefacts
+.firebase/
+firebase-debug.log
