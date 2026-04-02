@@ -12,7 +12,7 @@ def create_app(config_class=Config):
 
     # ── Proxy Fix for Railway / Render (Forces HTTPS callback URLs) ────────   
     from werkzeug.middleware.proxy_fix import ProxyFix
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
     # ── Extensions ──────────────────────────────────────────────────────────
     db.init_app(app)
