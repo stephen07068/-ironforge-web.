@@ -31,7 +31,7 @@ def create_app(config_class=Config):
     app.register_blueprint(cart_bp,     url_prefix='/cart')
     app.register_blueprint(orders_bp,   url_prefix='/orders')
     app.register_blueprint(payments_bp, url_prefix='/payment')
-    app.register_blueprint(admin_bp,    url_prefix=f"/{app.config['ADMIN_SECRET_PATH']}")
+    app.register_blueprint(admin_bp,    url_prefix='/admin')
 
     # ── Jinja2 global helpers ────────────────────────────────────────────────
     @app.template_filter('naira')
