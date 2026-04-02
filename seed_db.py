@@ -181,6 +181,9 @@ SAMPLE_PRODUCTS = [
 def seed():
     app = create_app()
     with app.app_context():
+        # Ensure tables are created first
+        db.create_all()
+        
         # Clear existing products
         Product.query.delete()
         db.session.commit()
